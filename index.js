@@ -116,6 +116,115 @@ if (text.includes("#say")){
 conn.sendMessage(id, teks, MessageType.text)
 }
 
+const botTol = () => {
+        msg.reply('[!] Maaf, fitur ini hanya untuk admin(owner).')
+        return
+    }
+const botTol2 = () => {
+        msg.reply(`[!] Maaf, fitur ini hanya untuk 'Group Chat'.`)
+        return
+    }
+
+    if (msg.body.startsWith('!subject ')) {
+        if (chat.isGroup) {
+            if (dariGC.replace('@c.us', '') == chat.owner.user || dariGC.replace('@c.us','') == '6285892766102') {
+                let title = msg.body.slice(9)
+                chat.setSubject(title)
+            } else {
+                botTol()
+            }
+        } else {
+            botTol2()
+        }
+    } else if (msg.body === '!getall') {
+        const chat = await msg.getChat();
+
+        let text = "╭───「 Get All 」\n";
+        let mentions = [];
+
+        for(let participant of chat.participants) {
+            const contact = await client.getContactById(participant.id._serialized);
+
+            mentions.push(contact);
+			text += "├≽ ";
+            text += `@${participant.id.user} `;
+			text += "\n";
+        }
+	text += "╰───「 Success 」"
+        chat.sendMessage(text, { mentions });
+    } else if (msg.body.startsWith('!desk ')) {
+        if (chat.isGroup) {
+            if (dariGC.replace('@c.us', '') == chat.owner.user || dariGC.replace('@c.us','') == '6285892766102') {
+                let title = msg.body.split("!desk ")[1]
+                chat.setDescription(title)
+            } else {
+                botTol()
+            }
+        } else {
+            botTol2()
+        }
+    } else if (msg.body.startsWith('!promote ')) {
+        if (chat.isGroup) {
+            if (dariGC.replace('@c.us', '') == chat.owner.user || dariGC.replace('@c.us','') == '6285892766102') {
+                const contact = await msg.getContact();
+                const title = msg.mentionedIds[0]
+                chat.promoteParticipants([`${title}`])
+                //chat.sendMessage(`[:] @${title.replace('@c.us', '')} sekarang anda adalah admin sob 🔥`)
+            } else {
+                botTol()
+            }
+        } else {
+            botTol2()
+        }
+    } else if (msg.body.startsWith('!demote ')) {
+        if (chat.isGroup) {
+            if (dariGC.replace('@c.us', '') == chat.owner.user || dariGC.replace('@c.us','') == '6285892766102') {
+                let title = msg.mentionedIds[0]
+                chat.demoteParticipants([`${title}`])
+            } else {
+                botTol()
+            }
+        } else {
+            botTol2()
+        }
+    } else if (msg.body.startsWith('!add ')) {
+        if (chat.isGroup) {
+            if (dariGC.replace('@c.us', '') == chat.owner.user || dariGC.replace('@c.us','') == '6285892766102' || dariGC.replace('@c.us','') == '19197694653') {
+                let title = msg.body.slice(5)
+                if (title.indexOf('62') == -1) {
+                    chat.addParticipants([`${title.replace('0', '62')}@c.us`])
+                    //msg.reply(`[:] Selamat datang @${title}! jangan lupa baca Deskripsi group yah 😎👊🏻`)
+                } else {
+                    msg.reply('[:] Format nomor harus 0821xxxxxx')
+                }
+            } else {
+                botTol()
+            }
+        } else {
+            botTol2()
+        }
+    } else if (msg.body.startsWith('!kick ')) {
+        if (chat.isGroup) {
+            if (dariGC.replace('@c.us', '') == chat.owner.user || dariGC.replace('@c.us','') == '6285892766102' || dariGC.replace('@c.us','') == '19197694653') {
+                let title = msg.mentionedIds
+                    chat.removeParticipants([...title])
+                // console.log([...title]);
+            } else {
+                botTol()
+            }
+        } else {
+            botTol2()
+        }
+    } else if (msg.body == '!owner') {
+        if (chat.isGroup) {
+            msg.reply(JSON.stringify({
+                owner: chat.owner.user
+            }))
+        } else {
+            botTol2()
+        }
+    }
+
 if (text.includes("#nulis")){
   const teks = text.replace(/#nulis /, "")
 axios.get(`https://mhankbarbar.herokuapp.com/nulis?text=${teks}&apiKey=zFuV88pxcIiCWuYlwg57`).then((res) => {
@@ -123,6 +232,52 @@ axios.get(`https://mhankbarbar.herokuapp.com/nulis?text=${teks}&apiKey=zFuV88pxc
     conn.sendMessage(id, hasil ,MessageType.text);
 })
 }
+
+} else if (msg.body.startsWith("#brainly ")) {
+		function BrainlySearch(pertanyaan, amount,cb){
+ 	   		brainly(pertanyaan.toString(),Number(amount)).then(res => {
+
+	      		let brainlyResult=[];
+
+        		res.forEach(ask=>{
+	          		let opt={
+        	    		pertanyaan:ask.pertanyaan,
+	            		fotoPertanyaan:ask.questionMedia,
+        	  		}
+	          		ask.jawaban.forEach(answer=>{
+        	    		opt.jawaban={
+	              		judulJawaban:answer.text,
+        	      		fotoJawaban:answer.media
+	            	}
+        	  	})
+	            	brainlyResult.push(opt)
+        		})
+
+	        	return brainlyResult
+
+	    	}).then(x=>{
+	        	cb(x)
+
+	    	}).catch(err=>{
+		        console.log(`${err}`.error)
+	    	})
+	}
+		const brainly = require('brainly-scraper')
+		var mes = msg.body.split('!brainly ')[1]
+		let tanya = mes.split(/\s/)
+		let jum = Number(tanya[tanya.length-1].split('-')[1]) || 2
+		if(Number(tanya[tanya.length-1])){
+		    tanya.pop()
+		}
+		let quest = tanya.join(' ')
+		msg.reply(`*Pertanyaan : ${quest}*\n*Jumlah jawaban : ${Number(jum)}*`)
+
+		BrainlySearch(quest,Number(jum), function(res){
+			console.log(res)
+			res.forEach(x=>{
+				msg.reply(`*foto pertanyaan*\n${x.fotoPertanyaan.join('\n')}\n*pertanyaan :*\n${x.pertanyaan}\n\n*jawaban :*\n${x.jawaban.judulJawaban}\n*foto jawaban*\n${x.jawaban.fotoJawaban.join('\n')}`)
+			})
+		})
 
 if (text.includes("#ytmp3")){
 const teks = text.replace(/#ytmp3 /, "")
@@ -147,6 +302,14 @@ axios.get(`https://mhankbarbar.herokuapp.com/api/epbe?url=${teks}&apiKey=zFuV88p
     conn.sendMessage(id, hasil ,MessageType.text);
 })
 }
+
+} else if (msg.body.startsWith("#lirik ")) {
+		const lagu = msg.body.slice(7)
+		const kyaa = lagu.replace(/ /g, '+')
+		const response = await fetch('http://scrap.terhambar.com/lirik?word='+kyaa)
+		if (!response.ok) throw new Error(`unexpected response ${response.statusText}`);
+		const json = await response.json()
+		if (json.status) await msg.reply(`Lirik lagu ${lagu.replace('-',' ')} \n\n\n${json.result.lirik}`)
 
 if (text.includes("#ig")){
 const teks = text.replace(/#ig /, "")
