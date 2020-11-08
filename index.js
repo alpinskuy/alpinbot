@@ -250,8 +250,8 @@ conn.sendMessage(id, 'Ya?, ada yang bisa saya bantu? kalo bingung ketik #help ya
 else if (text == 'P'){
 conn.sendMessage(id, 'Ya?, ada yang bisa saya bantu? kalo bingung ketik #help ya say. Jngn Lupa Follow IG aing @pinnskuyy.' ,MessageType.text);
 }
-else if (text == '#sticker){
-conn.sendMessage(id, 'Maaf Saat Ini Tidak Dapat Mengakses Fitur Sticker..' ,MessageType.text);
+else if (text == 'oi){
+conn.sendMessage(id, 'oiit ketik help ya anjing..' ,MessageType.text);
 }
 else if (text == '#stiker'){
 conn.sendMessage(id, 'Maaf saat ini tidak bisa mengakses fitur stiker..' ,MessageType.text);
